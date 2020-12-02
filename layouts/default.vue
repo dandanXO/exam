@@ -3,7 +3,41 @@
     <Nuxt />
   </div>
 </template>
+<script>
 
+export default {
+  mounted () {
+    if (process.browser) {
+      this.listenCookieChange(async ({ oldValue, newValue }) => {
+        console.log(`Cookie changed from "${oldValue}" to "${newValue}"`)
+        await this.$store.dispatch('fetchUserData')
+
+        if (!this.$store.state.logined) {
+          this.$router.push('/')
+        }
+      }, 1000)
+    }
+  },
+  methods: {
+    listenCookieChange (callback, interval = 1000) {
+      let lastCookie = document.cookie
+      setInterval(() => {
+        const cookie = document.cookie
+        if (cookie !== lastCookie) {
+          try {
+            // eslint-disable-next-line standard/no-callback-literal
+            callback({ oldValue: lastCookie, newValue: cookie })
+          } finally {
+            lastCookie = cookie
+          }
+        } else {
+          console.log(this.$store.state.logined)
+        }
+      }, interval)
+    }
+  }
+}
+</script>
 <style>
 html {
   font-family:

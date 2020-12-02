@@ -55,11 +55,11 @@ export default {
   methods: {
     async login () {
       try {
-        const res = await this.$axios.post('/authenticate', { email: this.email, password: this.password })
-        if (res.data.success) {
-          localStorage.setItem('user-token', res.data.token)
-          Cookies.set('user-token', res.data.token)
-          this.$store.dispatch('fetchUserData')
+        const res = await this.$axios.post('http://private-anon-08f825e2f2-interview10.apiary-mock.com/auth/login', { account: this.email, password: this.password })
+        if (res.data) {
+          localStorage.setItem('user-token', res.data.access_token)
+          Cookies.set('user-token', res.data.access_token, { expires: 7 })
+          await this.$store.dispatch('fetchUserData')
           this.$router.push('/account')
         }
       } catch (e) {
